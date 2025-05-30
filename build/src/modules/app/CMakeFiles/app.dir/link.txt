@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC -g -O0 -Wall -ggdb -Wno-psabi -g CMakeFiles/app.dir/main.cc.o -o ../../../bin/app   -L/home/xlinux/gitRoot/github/XWorkSpace/third_party/x64/lib  -L/home/xlinux/gitRoot/github/XWorkSpace/build/lib  -Wl,-rpath,/home/xlinux/gitRoot/github/XWorkSpace/third_party/x64/lib:/home/xlinux/gitRoot/github/XWorkSpace/build/lib: -lpthread -lstdc++ -lm 
