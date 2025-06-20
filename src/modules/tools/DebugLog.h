@@ -1,6 +1,7 @@
 #ifndef __DEBUGLOG_H__
 #define __DEBUGLOG_H__
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h> //strrchr()函数所需头文件
 #include <time.h>
 #include <sys/time.h>

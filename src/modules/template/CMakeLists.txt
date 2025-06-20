@@ -1,4 +1,4 @@
-project(Tools)
+project(Template)
 
 # 添加导出定义
 add_definitions(-DTOOLS_API_EXPORTS)
@@ -32,6 +32,8 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${PROJ_SRC_DIR}
+        ${PROJ_SRC_DIR}/modules
+        ${PROJ_SRC_DIR}/modules/tools
         ${THIRD_PARTY_DIR}/${PROJ_3RD}/include
 )
 
@@ -42,17 +44,18 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${PROJ_BIN_DIR}
     VERSION 1.0.0
     SOVERSION 1
-    OUTPUT_NAME "Tools"
+    OUTPUT_NAME "Template"
 )
 
 # 链接库
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${SYSTEM_LIBS}
+    Tools
 )
 
 # 安装目标
 install(TARGETS ${PROJECT_NAME}
-    EXPORT ToolsTargets
+    EXPORT TemplateTargets
     LIBRARY DESTINATION ${PROJ_LIB_DIR}
     ARCHIVE DESTINATION ${PROJ_LIB_DIR}
     RUNTIME DESTINATION ${PROJ_BIN_DIR}
@@ -61,7 +64,7 @@ install(TARGETS ${PROJECT_NAME}
 # 安装头文件（保持目录结构）
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-    DESTINATION include/Tools
+    DESTINATION include/template
     FILES_MATCHING 
         PATTERN "*.h"
         PATTERN "*.hpp"
@@ -69,7 +72,7 @@ install(
 )
 
 # 导出目标（可选，便于其他项目使用）
-install(EXPORT ToolsTargets
-    FILE ToolsConfig.cmake
-    DESTINATION ${PROJ_LIB_DIR}/cmake/Tools
+install(EXPORT TemplateTargets
+    FILE TemplateConfig.cmake
+    DESTINATION ${PROJ_LIB_DIR}/cmake/Template
 )
