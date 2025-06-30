@@ -1,19 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 project(XWorkSpace)
 
-# 自动检测操作系统平台
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(PLATFORM_LINUX TRUE)
-    message(STATUS "Detected Linux platform")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(PLATFORM_WINDOWS TRUE)
-    message(STATUS "Detected Windows platform")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(PLATFORM_MACOS TRUE)
-    message(STATUS "Detected macOS platform")
-else()
-    message(FATAL_ERROR "Unsupported platform: ${CMAKE_SYSTEM_NAME}")
+# 检测操作系统平台 - 只允许Linux
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(FATAL_ERROR "This project only supports Linux platform. Detected: ${CMAKE_SYSTEM_NAME}")
 endif()
+
+set(PLATFORM_LINUX TRUE)
+message(STATUS "Detected Linux platform - proceeding with build")
 
 option(WITH_CMAKE_LEAK "Enable memory leak detection" OFF)
 option(WITH_CMAKE_ADDRESS "Enable address sanitizer" OFF)
@@ -22,19 +16,14 @@ option(WITH_TEST "Build tests" OFF)
 # 强制设置为Debug模式
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Architecture handling
 if(DEFINED ARCH)
     set(PROJ_ARCH ${ARCH})
 else()
-    # 根据操作系统设置默认架构
-    if(PLATFORM_WINDOWS)
-        set(PROJ_ARCH "x64")
-    else()
-        set(PROJ_ARCH "x86")
-    endif()
+    set(PROJ_ARCH "x86")  # Linux默认x86架构
 endif()
 
 # Add custom cmake modules
@@ -60,34 +49,19 @@ message(STATUS "Build Type: ${UPPER_BUILD_TYPE}")
 # 始终添加调试定义
 add_definitions(-DPLAT_DEBUG)
 
-# Platform definitions
+# Linux平台定义
+add_definitions(-DPLAT_LINUX)
 add_definitions(-D_LARGEFILE_SOURCE)
 
-# 平台特定定义
-if(PLATFORM_LINUX)
-    add_definitions(-DPLAT_LINUX)
-    
-    if(PROJ_ARCH STREQUAL "arm")
-        add_definitions(-DPLAT_LINUX_DEVICE)
-        set(PROJ_3RD "arm")
-    elseif(PROJ_ARCH STREQUAL "x86")
-        add_definitions(-DMMS_REPLACE_PORT)
-        set(PROJ_3RD "x86")
-    else()
-        set(PROJ_3RD "x64")
-    endif()
-elseif(PLATFORM_WINDOWS)
-    add_definitions(-DPLAT_WINDOWS)
-    
-    if(PROJ_ARCH STREQUAL "x86")
-        add_definitions(-DPLAT_WINDOWS_X86)
-        set(PROJ_3RD "x86")
-    else()
-        set(PROJ_3RD "x64")
-    endif()
-elseif(PLATFORM_MACOS)
-    add_definitions(-DPLAT_MACOS)
-    set(PROJ_3RD "macos")
+# 架构特定定义
+if(PROJ_ARCH STREQUAL "arm")
+    add_definitions(-DPLAT_LINUX_DEVICE)
+    set(PROJ_3RD "arm")
+elseif(PROJ_ARCH STREQUAL "x86")
+    add_definitions(-DMMS_REPLACE_PORT)
+    set(PROJ_3RD "x86")
+else()
+    set(PROJ_3RD "x64")
 endif()
 
 # Directory setup
@@ -101,61 +75,42 @@ set(INSTALL_PATH_LIB "${BUILD_OUTPUT_DIR}/lib")
 set(PROJ_BIN_DIR "${BUILD_OUTPUT_DIR}/bin")
 set(PROJ_LIB_DIR "${BUILD_OUTPUT_DIR}/lib")
 
-# Third-party libraries configuration - 根据平台设置
-if(PLATFORM_WINDOWS)
-    set(SYSTEM_LIBS setupapi ws2_32 mswsock)
+# Third-party libraries configuration - Linux only
+set(SYSTEM_LIBS pthread dl m rt) 
+ 
+if(PROJ_ARCH STREQUAL "x64")
     set(ZMQ_LIBS libzmq)
-    set(CURL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/curl/lib/libcurl.lib")
-elseif(PLATFORM_LINUX)
-    set(SYSTEM_LIBS pthread dl m rt)
-    if(PROJ_ARCH STREQUAL "x64")
-        set(ZMQ_LIBS libzmq)
-    else()
-        set(ZMQ_LIBS zmq)
-    endif()
-    set(CURL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/curl/lib/libcurl.a")
-    set(SSL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/openssl/lib/libssl.a")
-    set(SQLITE_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/sqlite/lib/libsqlite3.a")
-    set(MYSQL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/mysql/lib/libmysqlclient.a")
-elseif(PLATFORM_MACOS)
-    set(SYSTEM_LIBS "-framework Foundation" "-framework CoreFoundation")
+else()
     set(ZMQ_LIBS zmq)
-    set(CURL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/curl/lib/libcurl.dylib")
+endif()
+set(CURL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/curl/lib/libcurl.a")
+set(SSL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/openssl/lib/libssl.a")
+set(SQLITE_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/sqlite/lib/libsqlite3.a")
+set(MYSQL_LIBS "${THIRD_PARTY_DIR}/${PROJ_3RD}/mysql/lib/libmysqlclient.a")
+
+# Compiler flags - Linux only
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -g -O0 -Wall -ggdb")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -g -O0 -Wall -ggdb")
+
+# ARM架构特定标志
+if(PROJ_ARCH STREQUAL "arm")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-psabi")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
 endif()
 
-# Compiler flags - 根据平台设置
-if(PLATFORM_LINUX OR PLATFORM_MACOS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -g -O0 -Wall -ggdb")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -g -O0 -Wall -ggdb")
-    
-    # ARM架构特定标志
-    if(PROJ_ARCH STREQUAL "arm")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-psabi")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
-    endif()
-    
-    # 覆盖Release标志以确保始终使用Debug
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g -O0")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -O0")
-    
-    # Sanitizer选项
-    if(WITH_CMAKE_LEAK)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
-    endif()
+# 覆盖Release标志以确保始终使用Debug
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -O0")
 
-    if(WITH_CMAKE_ADDRESS)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-    endif()
-elseif(PLATFORM_WINDOWS)
-    # Windows编译标志
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zi /Od /Wall")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi /Od /Wall")
-    
-    # 覆盖Release标志
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zi /Od")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi /Od")
+# Sanitizer选项
+if(WITH_CMAKE_LEAK)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
+endif()
+
+if(WITH_CMAKE_ADDRESS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 endif()
 
 # Configuration summary
@@ -170,7 +125,7 @@ message(STATUS "  Library Output: ${PROJ_LIB_DIR}")
 message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE} (forced)")
 message(STATUS "************************************")
 
-# Include directories
+# )# Include directories
 include_directories(
     ${PROJ_SRC_DIR}
     ${THIRD_PARTY_DIR}/${PROJ_3RD}/include
@@ -193,6 +148,3 @@ file(MAKE_DIRECTORY ${PROJ_LIB_DIR})
 
 # 添加子项目
 add_subdirectory(src)
-
-# 安装规则 - 移动到src/CMakeLists.txt中或在创建目标后添加
-# install(TARGETS ${PROJECT_NAME} ...)

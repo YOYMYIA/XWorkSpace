@@ -1,28 +1,26 @@
 project(app)
 
-# 只在使用Qt时才需要AUTOMOC
-if(Qt5Core_FOUND OR Qt6Core_FOUND)
+# 只在使用Qt时才需要AUTOMOC - 保留但添加Linux条件
+if((Qt5Core_FOUND OR Qt6Core_FOUND) AND PLATFORM_LINUX)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
+find_package(glfw3 REQUIRED)
 # 关键修改1：添加template库的包含路径
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${PROJ_SRC_DIR}
     ${PROJ_SRC_DIR}/modules
-    ${PROJ_SRC_DIR}/modules/template  # template库的源文件路径
-    ${PROJ_SRC_DIR}/modules/tools# template库的源文件路径
+    ${PROJ_SRC_DIR}/modules/template
+    ${PROJ_SRC_DIR}/modules/tools
     ${THIRD_PARTY_DIR}/${PROJ_3RD}/include
-    
-    # 添加template库的父目录，使其头文件可以以template/开头引用
 )
 
-# 链接目录
+# 链接目录 - 仅Linux路径
 link_directories(
     ${THIRD_PARTY_DIR}/${PROJ_3RD}/lib
-    ${INSTALL_PATH_LIB}
-    ${PROJ_LIB_DIR}  # 确保template库的路径在链接目录中
+    ${PROJ_LIB_DIR}
 )
 
 # 正确设置源文件列表
@@ -35,32 +33,23 @@ if(NOT PROJECT_SOURCES)
     message(FATAL_ERROR "No source files found for project ${PROJECT_NAME}")
 endif()
 
-# 创建可执行文件
-if(PROJ_ARCH STREQUAL "x64" AND WIN32)
-    add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
-else()
-    add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
-endif()
+# 创建可执行文件 - 仅Linux格式
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 # 添加项目名称作为定义
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     PROJECT_NAME="${PROJECT_NAME}"
 )
 
-# 设置系统库
-if(UNIX)
-    set(SYSTEM_LIBS pthread stdc++ m)
-elseif(WIN32)
-    set(SYSTEM_LIBS ws2_32)
-endif()
+# 设置系统库 - 仅Linux
+set(SYSTEM_LIBS pthread stdc++ m)
 
 # 关键修改2：链接template库
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${SYSTEM_LIBS}
     Template  # 确保链接template库
     Tools
-    # ${ZMQ_LIBS}
-    # ${CURL_LIBS}
+    glfw
 )
 
 # 设置输出目录
@@ -78,7 +67,6 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # 关键修改3：确保template库已构建
-# 如果template库在同一项目中，添加依赖关系
 if(TARGET Template)
     add_dependencies(${PROJECT_NAME} Template)
 endif()

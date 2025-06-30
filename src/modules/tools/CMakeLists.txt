@@ -35,7 +35,7 @@ target_include_directories(${PROJECT_NAME}
         ${THIRD_PARTY_DIR}/${PROJ_3RD}/include
 )
 
-# 设置目标属性
+# 设置目标属性（仅Linux）
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${PROJ_LIB_DIR}
     ARCHIVE_OUTPUT_DIRECTORY ${PROJ_LIB_DIR}
@@ -43,14 +43,16 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION 1.0.0
     SOVERSION 1
     OUTPUT_NAME "Tools"
+    # Linux特定设置
+    POSITION_INDEPENDENT_CODE ON
 )
 
-# 链接库
+# 链接库（仅Linux系统库）
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${SYSTEM_LIBS}
+    ${SYSTEM_LIBS}  # Linux系统库 (pthread, stdc++, m等)
 )
 
-# 安装目标
+# 安装目标（仅Linux路径）
 install(TARGETS ${PROJECT_NAME}
     EXPORT ToolsTargets
     LIBRARY DESTINATION ${PROJ_LIB_DIR}
