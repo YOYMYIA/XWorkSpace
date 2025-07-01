@@ -1,164 +1,72 @@
-#include <glad/glad.h>
+#include <glad/glad.h>  // 必须放在GLFW之前
 #include <GLFW/glfw3.h>
- 
-#include <iostream>
- 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
- 
-// 顶点着色器，GLSL语言
-const char *vertexShaderSource = "#version 330 core\n" 
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" 
-    "}\0";
-// 片元着色器
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
- 
-int main()
-{
-    // glfw: initialize and configure
-    glfwInit();
+#include <iostream>      // 用于错误输出
+#include "tools/DebugLog.h"
+
+// 错误回调函数
+void error_callback(int error, const char* description) {
+    std::cerr << "Error: " << description << std::endl;
+}
+
+int main(void) {
+    GLFWwindow* window;
+    DBG_LOGI("Hello World");
+
+    // 设置错误回调
+    glfwSetErrorCallback(error_callback);
+
+    /* 初始化glfw */
+    if (!glfwInit())
+        return -1;
+
+    // 设置OpenGL版本 (重要!)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
- 
-    // glfw window creation
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
+    
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // macOS需要
+    #endif
+
+    /* 创建一个Window 和 OpenGL上下文 */
+    window = glfwCreateWindow(960, 640, "Hello World", NULL, NULL);
+    if (!window) {
+        // 创建失败就退出
         glfwTerminate();
         return -1;
     }
+
+    /* 激活上面创建的OpenGL上下文 */
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
- 
-    // glad: load all OpenGL function pointers
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+    
+    // ===== 关键修复 ===== //
+    // 初始化GLAD (取消注释这行)
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
- 
- 
-    // build and compile our shader program
-    // ------------------------------------
-    // vertex shader
-    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // 把这个着色器源码附加到着色器对象。着色器对象，源码字符串数量，VS真正的源码
-    glCompileShader(vertexShader);
-    // check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // fragment shader
-    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // link shaders
-    int shaderProgram = glCreateProgram(); // shaderProgram 是多个着色器合并之后并最终链接完成的版本
-    glAttachShader(shaderProgram, vertexShader); // 附加
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
- 
- 
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left  
-         0.5f, -0.5f, 0.0f, // right 
-         0.0f,  0.5f, 0.0f  // top   
-    }; 
- 
-    unsigned int VBO, VAO;
-	//创建VAO对象
-    glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	//创建VBO对象，把顶点数组复制到一个顶点缓冲中，供OpenGL使用
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO); // 缓冲绑定到GL_ARRAY_BUFFER
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // 顶点数据复制到缓冲的内存中
- 
-	//解释顶点数据方式
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // 顶点数据的解释
-    glEnableVertexAttribArray(0);
- 
-    // 解绑VAO
-	glBindVertexArray(0); 
-	// 解绑VBO
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
- 
-    // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
-    {
-        // input
-        // -----
-        processInput(window);
- 
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
- 
-        // draw our first triangle
-        glUseProgram(shaderProgram); // 激活shaderProgram，怎么画
-        glBindVertexArray(VAO); // 画什么
-        glDrawArrays(GL_TRIANGLES, 0, 3); // 开始画
- 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
- 
-    // optional: de-allocate all resources
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
-    glfwTerminate();
+    // =================== //
     
+    // 设置视口
+    glViewport(0, 0, 960, 640);
+
+    /* 进入游戏引擎主循环 */
+    while (!glfwWindowShouldClose(window)) {
+        /* 处理鼠标键盘事件 */
+        glfwPollEvents();
+        
+        // 检查ESC键是否按下
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
+
+        /* 渲染代码 */
+        glClearColor(49.f/255, 77.f/255, 121.f/255, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        /* 交换前后缓冲区 */
+        glfwSwapBuffers(window);
+    }
+
+    glfwTerminate();
     return 0;
 }
- 
-//键盘按键回调函数  
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
- 
-//调整窗口大小回调函数
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
- 

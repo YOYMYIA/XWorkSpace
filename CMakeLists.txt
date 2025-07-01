@@ -11,7 +11,7 @@ message(STATUS "Detected Linux platform - proceeding with build")
 
 option(WITH_CMAKE_LEAK "Enable memory leak detection" OFF)
 option(WITH_CMAKE_ADDRESS "Enable address sanitizer" OFF)
-option(WITH_TEST "Build tests" OFF)
+option(WITH_TEST "Build tests" ON)
 
 # 强制设置为Debug模式
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
@@ -148,3 +148,4 @@ file(MAKE_DIRECTORY ${PROJ_LIB_DIR})
 
 # 添加子项目
 add_subdirectory(src)
+add_subdirectory(tests)
