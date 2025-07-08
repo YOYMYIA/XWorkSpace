@@ -14,7 +14,7 @@ public:
 protected:
     void SetUp()
     {
-        default_node=std::shared_ptr<Node>(new Node());
+        default_node = std::shared_ptr<Node>(new Node());
         root_node=std::make_shared<Node>(0);
         root_node->lchild=std::make_shared<Node>(1);
         root_node->rchild=std::make_shared<Node>(2);
