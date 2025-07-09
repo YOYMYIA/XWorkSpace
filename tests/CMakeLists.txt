@@ -6,7 +6,7 @@ if(WITH_TEST AND PLATFORM_LINUX)
     find_package(GTest REQUIRED)
     include(GoogleTest)
     
-    set(TEST_BIN_DIR "${PROJ_BIN_DIR}/tests")
+    set(TEST_BIN_DIR "${PROJ_BIN_DIR}")
     file(MAKE_DIRECTORY ${TEST_BIN_DIR})
     
     # 打印关键路径用于调试

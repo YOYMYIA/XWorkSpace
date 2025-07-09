@@ -33,12 +33,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0a457be9-c7b3-4b02-98f1-3e554a5be408" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modules/template/mystl/until.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/template/mystl/until.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/mystl/binaryTree.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/tests/mystl/binaryTree.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/mystl/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/tests/mystl/main.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/template/test.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/template/test.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/template/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/tests/template/main.cc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +97,7 @@
       <window_info id="Backup and Sync History" />
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18066406" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23587127" />
       <window_info id="Commit" order="1" weight="0.25" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info id="Learn" order="3" weight="0.18066406" />
@@ -178,7 +176,7 @@
       <updated>1751386949577</updated>
       <workItem from="1751386959591" duration="8000" />
       <workItem from="1751387095151" duration="500000" />
-      <workItem from="1751983894263" duration="4151000" />
+      <workItem from="1751983894263" duration="8357000" />
     </task>
     <servers />
   </component>
