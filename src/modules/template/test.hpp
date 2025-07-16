@@ -54,5 +54,25 @@ namespace test
     template <typename T>
     using RemoveReferenceConst = typename RemoveReferenceConst_<T>::type;
 
+    template <typename TW>
+    struct Wrapper
+    {
+        template <typename T, typename TDummy = void>
+        struct fun_
+        {
+            constexpr static size_t value = 0;
+        };
+
+        template <typename TDummy>
+        struct fun_<int, TDummy>
+        {
+            constexpr static size_t value = 1;
+        };
+    };
+
+    template <size_t Input>
+    constexpr size_t OnesCount = (Input % 2) + OnesCount<Input / 2>;
+
+    template <> constexpr size_t OnesCount<0> = 0;
 }
 #endif

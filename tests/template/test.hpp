@@ -2,10 +2,12 @@
 // Created by xlinux on 25-7-9.
 //
 
-#ifndef __TEST_HPP__
-#define __TEST_HPP__
+#ifndef UT__TEST_HPP__
+#define UT__TEST_HPP__
+
 #include "template/test.hpp"
 #include <gtest/gtest.h>
+#include "template/MetaNN/policy_container.h"
 
 using namespace test;
 
@@ -29,7 +31,9 @@ TEST_F(Test_, OneTest)
     RemoveReferenceConst<const int&> h = 3;
     std::cout << "h:" << h << std::endl;
     EXPECT_EQ(h, 3);
-
+    constexpr size_t res = OnesCount<45>;
+    std::cout << "res:" << res << std::endl;
 }
 
-#endif //TEST_HPP
+
+#endif

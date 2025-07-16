@@ -35,8 +35,7 @@
     <list default="true" id="0a457be9-c7b3-4b02-98f1-3e554a5be408" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modules/template/test.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/template/test.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/template/main.cc" beforeDir="false" afterPath="$PROJECT_DIR$/tests/template/main.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/template/test.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/tests/template/test.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,6 +60,9 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="2zHTLLMKsqsayisACBNB1NwXFRj" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -111,9 +113,10 @@
       <window_info anchor="bottom" id="Version Control" order="0" />
       <window_info anchor="bottom" id="Problems" order="1" />
       <window_info anchor="bottom" id="Problems View" order="2" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="3" visible="true" weight="0.25590277" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="3" visible="true" weight="0.33020833" />
       <window_info anchor="bottom" id="Services" order="4" weight="0.25590277" />
       <window_info anchor="bottom" id="CMake" order="5" />
+      <window_info anchor="bottom" id="Find" order="6" weight="0.33020833" />
       <window_info anchor="right" id="make" side_tool="true" />
       <window_info anchor="right" id="Coverage" side_tool="true" />
       <window_info anchor="right" id="Python Console" />
@@ -176,7 +179,7 @@
       <updated>1751386949577</updated>
       <workItem from="1751386959591" duration="8000" />
       <workItem from="1751387095151" duration="500000" />
-      <workItem from="1751983894263" duration="8357000" />
+      <workItem from="1751983894263" duration="17502000" />
     </task>
     <servers />
   </component>
