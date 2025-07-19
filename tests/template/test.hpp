@@ -22,7 +22,6 @@ class Test_ :public ::testing::Test
 
     void TearDown() override
     {
-
     }
 };
 
