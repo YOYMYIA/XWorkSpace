@@ -7,7 +7,7 @@
 
 #include "template/test.hpp"
 #include <gtest/gtest.h>
-#include "template/MetaNN/policy_container.h"
+#include "VarTypeDict.hpp"
 
 using namespace test;
 
