@@ -39,22 +39,43 @@ struct Create_<0, TCont, T...>
 };
 
 /// ====================== FindTagPos ===================================
+/**
+ * 主模板 (递归) 当TCurTag不是TFindTag时,递归处理剩余类型
+ * TTags表示剩余处理类型
+ * 
+ * 递归逻辑:移除当前TCurTag类型, 将剩余类型进行下一次递归
+ */
 template <typename TFindTag, size_t N, typename TCurTag, typename...TTags>
 struct Tag2ID_
 {
     constexpr static size_t value = Tag2ID_<TFindTag, N + 1, TTags...>::value;
 };
 
+/**
+ * 特化模板(终止条件) 
+ * 当前类型和目标类型相同时,返回当前索引
+ */
 template <typename TFindTag, size_t N, typename...TTags>
 struct Tag2ID_<TFindTag, N, TFindTag, TTags...>
 {
     constexpr static size_t value = N;
 };
 
+/**
+ * 模板变量(接口)
+ */
 template <typename TFindTag, typename...TTags>
 constexpr size_t Tag2ID = Tag2ID_<TFindTag, 0, TTags...>::value;
 
 /// ====================== NewTupleType ===================================
+/**
+ * 主模板声明(未定义) 处理通用情况
+ * @param TVal 要插入的新类型
+ * @param N 目标插入的位置
+ * @param M 当前处理位置
+ * @param TProcessedTypes 已处理了类型容器集合
+ * @param 剩余待处理类型 
+ */
 template <typename TVal, size_t N, size_t M, typename TProcessedTypes, typename... TRemainTypes>
 struct NewTupleType_;
 
