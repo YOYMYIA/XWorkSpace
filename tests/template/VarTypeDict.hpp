@@ -74,11 +74,15 @@ constexpr size_t Tag2ID = Tag2ID_<TFindTag, 0, TTags...>::value;
  * @param N 目标插入的位置
  * @param M 当前处理位置
  * @param TProcessedTypes 已处理了类型容器集合
- * @param 剩余待处理类型 
+ * @param TRemainTypes 剩余待处理类型 
  */
 template <typename TVal, size_t N, size_t M, typename TProcessedTypes, typename... TRemainTypes>
 struct NewTupleType_;
 
+/**
+ * 当当前位置M还未达到N时
+ * 将当前类型TCurType 添加到已处理类型列表TModifiedTypes中, 递归计数器+1, 继续处理剩余类型
+ */
 template <typename TVal, size_t N, size_t M, template <typename...> class TCont,
           typename...TModifiedTypes, typename TCurType, typename... TRemainTypes>
 struct NewTupleType_<TVal, N, M, TCont<TModifiedTypes...>,
@@ -89,13 +93,21 @@ struct NewTupleType_<TVal, N, M, TCont<TModifiedTypes...>,
                                         TRemainTypes...>::type;
 };
 
+
+/**
+ * 终止条件, 到达插入位置
+ */
 template <typename TVal, size_t N, template <typename...> class TCont,
           typename...TModifiedTypes, typename TCurType, typename... TRemainTypes>
-struct NewTupleType_<TVal, N, N, TCont<TModifiedTypes...>, TCurType, TRemainTypes...>
+struct NewTupleType_<TVal, N, N, TCont<TModifiedTypes...>, 
+                     TCurType, TRemainTypes...>
 {
     using type = TCont<TModifiedTypes..., TVal, TRemainTypes...>;
 };
 
+/**
+ * 模板变量(接口)
+ */
 template <typename TVal, size_t TagPos, typename TCont, typename... TRemainTypes>
 using NewTupleType = typename NewTupleType_<TVal, TagPos, 0, TCont, TRemainTypes...>::type;
 
