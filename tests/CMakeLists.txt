@@ -5,6 +5,7 @@ if(WITH_TEST AND PLATFORM_LINUX)
     
     find_package(GTest REQUIRED)
     include(GoogleTest)
+    find_package(OpenCV REQUIRED COMPONENTS core imgcodecs)
     
     set(TEST_BIN_DIR "${PROJ_BIN_DIR}")
     file(MAKE_DIRECTORY ${TEST_BIN_DIR})
@@ -55,6 +56,7 @@ if(WITH_TEST AND PLATFORM_LINUX)
                     GTest::gtest
                     GTest::gtest_main
                     ${SYSTEM_LIBS}
+                    ${OpenCV_LIBS}
                 )
                 
                 # 链接主项目库（如果存在）

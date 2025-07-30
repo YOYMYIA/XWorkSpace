@@ -24,8 +24,7 @@ struct Identity_
  */
 template <size_t N, template <typename...> class TCont, typename ...T>
 struct Create_
-{
-    using type = typename Create_<N - 1, TCont, NullParameter, T...>::type;
+{    using type = typename Create_<N - 1, TCont, NullParameter, T...>::type;
 
 };
 
