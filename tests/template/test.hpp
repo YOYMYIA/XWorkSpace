@@ -7,10 +7,10 @@
 
 #include "template/test.hpp"
 #include <gtest/gtest.h>
-#include "VarTypeDict.hpp"
+#include "template/MetaNN/VarTypeDict.h"
 #include <math.h>
 
-using namespace test;
+using namespace MetaNN;
 
 struct A; struct B; struct Weight; struct XX;
 
