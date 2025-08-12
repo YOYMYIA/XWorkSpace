@@ -178,7 +178,7 @@ namespace test
     struct MinorDedup_<TMinorClass, TCurPolicy, TP...>
     {
         using TCurMirror = typename TCurPolicy::MinorClass;
-        constexpr static bool cur_check = !(std::is_same<TMinorClass, TCurmirror>::value);
+        constexpr static bool cur_check = !(std::is_same<TMinorClass, TCurMirror>::value);
         constexpr static bool value = AndValue<cur_check, MinorDedup_<TMinorClass, TP...>>;
     };
 
@@ -203,7 +203,7 @@ namespace test
         // 递归检查当前策略的MinorClass是否与后续策略冲突
         static constexpr bool cur_check = MinorDedup_<typename TCurPolicy::MinorClass, TP...>::value;
         // 递归检查剩余策略的兼容性，并与当前检查结果进行逻辑与运算
-        static constexpr bool value = AndValue < cur_check, MinorCheck_<PolicyContainer<TP...>>;
+        static constexpr bool value = AndValue<cur_check, MinorCheck_<PolicyContainer<TP...>>>;
     };
 
     /**

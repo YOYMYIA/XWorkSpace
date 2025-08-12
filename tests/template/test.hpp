@@ -8,7 +8,7 @@
 #include "template/test.hpp"
 #include <gtest/gtest.h>
 #include "template/MetaNN/VarTypeDict.h"
-#include "template/MetaNN/VarTypeDict.h"
+#include "policy.hpp"
 #include <math.h>
 
 using namespace MetaNN;
