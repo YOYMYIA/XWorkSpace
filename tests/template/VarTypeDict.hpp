@@ -156,7 +156,7 @@ namespace test
             /**
              * @param TTag 表示键
              * @param TVal 表示值的类型
-             * x.set<A>(true) 根据C++自动推导规则,只需要显示指定第一个模板参数类型,编译器自动昂推导第二个
+             * x.set<A>(true) 根据C++自动推导规则,只需要显示指定第一个模板参数类型,编译器自动推导第二个
              */
 
             template <typename TTag, typename TVal>
